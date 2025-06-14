@@ -1,0 +1,7 @@
+A matrícula é: 122800
+R: 1.0 S: 2.0 T: 2.0 X: 8.0 Y: 0.0 Z: 0.0
+Robô cilíndico deve ser utilizado!
+Deve ser utilizada a estratégia de tempo mínimo (bang-bang)!
+O tempo de execução deve ser de 13.0 s!
+O ponto de partida deve ser:  [-0.75, -0.25, 0.75] !
+O ponto de chegada deve ser:  [0.75, 0.75, 1.75] !

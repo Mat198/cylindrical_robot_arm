@@ -87,18 +87,25 @@ class CylindricRobot(object):
         self.sim.setJointTargetPosition(self.motors[1], d2)
         self.sim.setJointTargetPosition(self.motors[2], d3)
     
-    def cartesianMove(self, x, y, z, duration):
-        print("Cartesian move to (", x, " ,", y, " ,", z, " ) m")
+    def cartesianMove(self, x, y, z):
+        print("Cartesian move to (", round(x,3), " ,", round(y,3), " ,", round(z,3), " ) m")
         [theta, d2, d3] = self.ik(x, y, z)
-        print("IK solution is (", theta, " °,", d2, " m,", d3, " m)")
+        self.sim.setJointTargetPosition(self.motors[0], theta)
+        self.sim.setJointTargetPosition(self.motors[1], d2)
+        self.sim.setJointTargetPosition(self.motors[2], d3)
+
+    def cartesianTrajectoryMove(self, x, y, z, duration):
+        print("Cartesian Trajectory move to (", x, " ,", y, " ,", z, " ) m")
+        [theta, d2, d3] = self.ik(x, y, z)
+        print("Joint target is (", round(theta,3), " °,", round(d2,3), " m,", round(d3,3), " m)")
         jointPos = self.getCurrentJointPostions()
         vel, acc = self.calculateExecutionParams([theta, d2, d3], jointPos, duration)
-        print("Current joint position is: ", jointPos)
-        print("Execution velocity: ", vel)
-        print("Execution acceleration: ", acc)
-        self.sim.setJointTargetPosition(self.motors[0], theta, [vel[0], acc[0], 1000])
-        self.sim.setJointTargetPosition(self.motors[1], d2, [vel[1], acc[1], 1000])
-        self.sim.setJointTargetPosition(self.motors[2], d3, [vel[2], acc[2], 1000])
+        print("Current joint position is: ", [round(elem, 3) for elem in jointPos])
+        print("Execution velocity: ", [round(elem, 3) for elem in vel])
+        print("Execution acceleration: ", [round(elem, 3) for elem in acc])
+        self.sim.setJointTargetPosition(self.motors[0], theta, [vel[0], acc[0], self.jointJerk])
+        self.sim.setJointTargetPosition(self.motors[1], d2, [vel[1], acc[1], self.jointJerk])
+        self.sim.setJointTargetPosition(self.motors[2], d3, [vel[2], acc[2], self.jointJerk])
 
     def calculateExecutionParams(self, target, currentPosition, duration):
         vel = []

@@ -43,9 +43,12 @@ class CylindricRobot(object):
         self.tipName = "/tip"
         self.tip = self.getTipObject(self.sim)
         # Limite de movimentação das juntas
-        self.limits = {'motor0': {'min': -math.pi, 'max': math.pi}, # rad
-                       'motor1': {'min': 0, 'max': 2.0}, # m
-                       'motor2': {'min': 0, 'max': 1.2}} # m
+        self.limits = [{'min': -math.pi, 'max': math.pi}, # rad
+                        {'min': 0., 'max': 2.0}, # m
+                        {'min': 0., 'max': 1.2}] # m
+
+        self.jointJerk = 1000
+        self.debug = debug
     
     def setJointPosition(self, positon):
         jointPos = self.ik(positon[0], positon[1], positon[2])

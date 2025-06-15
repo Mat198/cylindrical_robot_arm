@@ -112,7 +112,7 @@ class RobotControlApp:
             messagebox.showinfo("Erro", "Valor invalido para posição alvo")
             return # Ignora se a entrada não for numérica, a mensagem de erro já foi mostrada
 
-        self.robot.cartesianMove(target[0], target[1], target[2], duration)
+        self.robot.cartesianTrajectoryMove(target[0], target[1], target[2], duration)
 
     def _update_current_position_display(self):
         """Atualiza o Label com a posição atual."""
@@ -124,7 +124,7 @@ class RobotControlApp:
 if __name__ == "__main__":
 
     from coppeliasim_zmqremoteapi_client import RemoteAPIClient
-    from scripts.connect import connect
+    from connect import connect
     # Classe para interface com o robô
     from robot import CylindricRobot
 

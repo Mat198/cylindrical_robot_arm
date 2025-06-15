@@ -28,6 +28,7 @@ Transformação de 0 -> 3 (Cinemática inversa)
 """
 import numpy as np
 import math
+import time
 
 class CylindricRobot(object):
     def __init__(self, name, sim, debug = False):
@@ -91,7 +92,8 @@ class CylindricRobot(object):
         self.sim.setJointTargetPosition(self.motors[2], d3)
     
     def cartesianMove(self, x, y, z):
-        print("Cartesian move to (", round(x,3), " ,", round(y,3), " ,", round(z,3), " ) m")
+        if self.debug:
+            print("Cartesian move to (", round(x,3), " ,", round(y,3), " ,", round(z,3), " ) m")
         [theta, d2, d3] = self.ik(x, y, z)
         self.sim.setJointTargetPosition(self.motors[0], theta)
         self.sim.setJointTargetPosition(self.motors[1], d2)
@@ -121,12 +123,55 @@ class CylindricRobot(object):
         return vel, acc
 
     def executeBangBangTrajectory(self, target, duration):
+        print("Executing linear Bang Bang trajectory to (",  
+              [round(elem, 3) for elem in target], " in " , duration, "s")
+        COORDINATES = 3
         # Função lambda que calcula o valor de alfa na etapa de aceleração
-        accAlfa = lambda time : time**2 / duration 
+        accAlpha = lambda time : (time**2) / (duration**2) 
         # Função lambda que calcula o valor de alfa na etapa de frenagem
-        brakeAlfa = lambda time : 2 * time / duration - time**2 / duration
+        brakeAlpha = lambda time : 2 * time / duration - (time**2)/ (duration**2)
+        
+        # Dados de execução da trajetória em coordenada cartesianas
+        initialPos = self.getCurrentPosition()
 
-        # while time < duration:
+        # Listas para armazenar dados
+        jointsPosition = []
+        endEffectorData = []
+
+        # Variáveis de temporização
+        switchTime = duration / 2
+        startTime = time.time()
+        while time.time() - startTime < duration:
+            now = (time.time() - startTime) 
+
+            # Define a função alpha utilizada
+            if now < switchTime:
+                alpha = accAlpha(now + 0.1)
+            else:
+                alpha = brakeAlpha(now + 0.1)
+            
+            # Calcula a posição alvo nesse instante
+            pos = []
+            for i in range(0, COORDINATES):
+                # Lista com as posições x, y, z nessa ordem
+                pos.append(initialPos[i] + alpha * (target[i] - initialPos[i]))
+
+            # Realiza a movimentação do robô
+            self.cartesianMove(*pos)
+
+            # Salva os dados para plot dos gráficos
+            curPos = self.getCurrentPosition()
+            print("Time:", round(now,2), "    Position: ", [round(elem, 3) for elem in curPos]) 
+            endEffectorData.append([now, curPos, self.getCurrentVelocity()])
+            jointsPosition.append([now, self.getCurrentJointPostions()])
+            #  Espera alguns segundos para mandar o próximo alvo
+            time.sleep(0.1)
+
+        # Salva os dados finais
+        endEffectorData.append([now, self.getCurrentPosition(), self.getCurrentVelocity()])
+        jointsPosition.append([now, self.getCurrentJointPostions()])
+
+        return endEffectorData, jointsPosition, 
 
     # Retorna a matriz de rotação para transformação direta
     def genDirRotMatrix (self, theta):
@@ -171,8 +216,9 @@ class CylindricRobot(object):
             theta = thetaList[1]
         else:
             raise ValueError("Falhou em calcular ik")
-        print("Solução da cinemática inversa: ", 
-            [round(math.degrees(theta), 3), round(d2, 3), round(d3, 3)])
+        if self.debug:
+            print("Solução da cinemática inversa: ", 
+                [round(math.degrees(theta), 3), round(d2, 3), round(d3, 3)])
         
         return [theta, d2, d3]
 

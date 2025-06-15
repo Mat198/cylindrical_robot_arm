@@ -71,6 +71,10 @@ class CylindricRobot(object):
         pos = self.sim.getObjectPosition(self.tip, self.sim.handle_world)
         return pos
     
+    def getCurrentVelocity(self):
+        linVel, __ = self.sim.getObjectVelocity(self.tip, self.sim.handle_world)
+        return linVel
+    
     def getCurrentJointPostions(self):
         jointPos = []
         for i in range(0, self.jointNumber):

@@ -136,19 +136,21 @@ class CylindricRobot(object):
 
         # Listas para armazenar dados
         jointsPosition = []
-        endEffectorData = []
+        endEffectorPos = []
+        endEffectorVel = []
+        trajectoryTime = []
 
         # Variáveis de temporização
-        switchTime = duration / 2
+        switchTime = duration / 2.0
         startTime = time.time()
         while time.time() - startTime < duration:
             now = (time.time() - startTime) 
 
             # Define a função alpha utilizada
             if now < switchTime:
-                alpha = accAlpha(now + 0.1)
+                alpha = accAlpha(now)
             else:
-                alpha = brakeAlpha(now + 0.1)
+                alpha = brakeAlpha(now)
             
             # Calcula a posição alvo nesse instante
             pos = []
@@ -159,19 +161,25 @@ class CylindricRobot(object):
             # Realiza a movimentação do robô
             self.cartesianMove(*pos)
 
-            # Salva os dados para plot dos gráficos
+            # Mostra o progresso da trajetória
             curPos = self.getCurrentPosition()
-            print("Time:", round(now,2), "    Position: ", [round(elem, 3) for elem in curPos]) 
-            endEffectorData.append([now, curPos, self.getCurrentVelocity()])
-            jointsPosition.append([now, self.getCurrentJointPostions()])
+            print("Time:", round(now,2), "    Position: ", [round(elem, 3) for elem in curPos])
+            
+            # Salva os dados para plot dos gráficos
+            trajectoryTime.append(now) 
+            endEffectorPos.append(curPos)
+            endEffectorVel.append(self.getCurrentVelocity())
+            jointsPosition.append(self.getCurrentJointPostions())
             #  Espera alguns segundos para mandar o próximo alvo
             time.sleep(0.1)
 
         # Salva os dados finais
-        endEffectorData.append([now, self.getCurrentPosition(), self.getCurrentVelocity()])
-        jointsPosition.append([now, self.getCurrentJointPostions()])
+        trajectoryTime.append(now)
+        endEffectorPos.append(self.getCurrentPosition())
+        endEffectorVel.append(self.getCurrentVelocity())
+        jointsPosition.append(self.getCurrentJointPostions())
 
-        return endEffectorData, jointsPosition, 
+        return trajectoryTime, endEffectorPos, endEffectorVel, jointsPosition
 
     # Retorna a matriz de rotação para transformação direta
     def genDirRotMatrix (self, theta):

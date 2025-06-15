@@ -30,7 +30,7 @@ import numpy as np
 import math
 
 class CylindricRobot(object):
-    def __init__(self, name, sim):
+    def __init__(self, name, sim, debug = False):
         self.name = name
         self.sim = sim
         self.d1 = 0.15 # m
@@ -155,8 +155,10 @@ class CylindricRobot(object):
             s1 = math.sin(angle)
             d3 = y * c1 - x * s1 - self.df
             d3List.append(d3)
-        print("Soluções para theta: ", thetaList)
-        print("Soluções para d3: ", d3List)
+        
+        if self.debug:
+            print("Soluções para theta: ", thetaList)
+            print("Soluções para d3: ", d3List)
     
         if d3List[0] >= 0:
             d3 = d3List[0]

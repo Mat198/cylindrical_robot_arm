@@ -1,30 +1,27 @@
 """
 Implementação de classe para controle do robô cilíndrico. 
 
-Foi utilizado considerado no modelo os seguintes limites para as juntas:
+Foram considerados no modelo os seguintes limites para as juntas:
 Eixo 0 (Rotação): -180° <-> 180°
 Eixo 1 (Translação em Z): 0 <-> 2.0 m 
 Eixo 2 (Translação radial): 0 <-> 1.2 m
  Embedded Financial Solutions
 
 Matriz de DH do manipulador:
-Link θi     di     ai    αi
+Link θi     di     ai    alpha i
 1    θ*     d1      0    0
 2    0      d2*    a2   -90°
 3   90°  df + d3*  a3    0
 
 Sendo d1 = 0.15 m e a2 = 0.15 m a3 = 0.075 df = 0.25
+df corresponde a distância do 0 do eixo 3 até o ponto de fixação
+de modo que quando d3 está em 0 a ferramenta está na posição df. 
 Transformação de 3 -> 0 (Cinemática direta)
 |0  -c1  -s1  -s1 (d3 + df) + c1 a2 |
 |0  -s1   c1   c1 (d3 + df) + s1 a2 |
 |1   0    0        d1 + d2 - a3     |
 |0   0    0               1         |
 
-Transformação de 0 -> 3 (Cinemática inversa)
-| 0    0    1     a3 - d1 - d2 |
-|-c1  -s1   0          a2      |
-|-s1   c1   0      -(d3 + df)  |
-| 0    0    0           1      |
 """
 import numpy as np
 import math
@@ -50,6 +47,7 @@ class CylindricRobot(object):
 
         self.jointJerk = 1000
         self.debug = debug
+        self.teleport = False
     
     def setJointPosition(self, positon):
         jointPos = self.ik(positon[0], positon[1], positon[2])
@@ -96,9 +94,14 @@ class CylindricRobot(object):
         if self.debug:
             print("Cartesian move to (", round(x,3), " ,", round(y,3), " ,", round(z,3), " ) m")
         [theta, d2, d3] = self.ik(x, y, z)
-        self.sim.setJointTargetPosition(self.motors[0], theta)
-        self.sim.setJointTargetPosition(self.motors[1], d2)
-        self.sim.setJointTargetPosition(self.motors[2], d3)
+        if not self.teleport:
+            self.sim.setJointTargetPosition(self.motors[0], theta)
+            self.sim.setJointTargetPosition(self.motors[1], d2)
+            self.sim.setJointTargetPosition(self.motors[2], d3)
+        else:
+            self.sim.setJointPosition(self.motors[0], theta)
+            self.sim.setJointPosition(self.motors[1], d2)
+            self.sim.setJointPosition(self.motors[2], d3)
 
     def cartesianTrajectoryMove(self, x, y, z, duration):
         print("Cartesian Trajectory move to (", x, " ,", y, " ,", z, " ) m")

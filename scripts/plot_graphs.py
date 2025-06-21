@@ -50,18 +50,30 @@ def plotEefTrajectory(time, toolPosition):
 
     plt.tight_layout()
     plt.show()
+    
+def plotEefVelocity(trajTime, toolVelocity, desiredVel):
+    __, axis = plt.subplots(3, 1)
+    vel = np.array(toolVelocity)
+    dVel = np.array(desiredVel)
 
-def plotRouteInWorkspace(origin, target, workspace):
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
-    ax.scatter(workspace[:, 0], workspace[:, 1], workspace[:, 2], s=1, alpha=0.5, c='blue')
-    ax.plot([origin[0], target[0]], [origin[1], target[1]], [origin[2], target[2]], c='red')
-    ax.set_xlabel('X (m)')
-    ax.set_ylabel('Y (m)')
-    ax.set_zlabel('Z (m)')
-    ax.set_title('Área de Trabalho com rota proposta')
+    axis[0].plot(trajTime, vel[:, 0])
+    axis[0].plot(trajTime, dVel[:, 0])
+    axis[0].set_ylabel('vel [m]', fontsize=12)
+    axis[0].set_title("vel no eixo X")
+
+    axis[1].plot(trajTime, vel[:, 1])
+    axis[1].plot(trajTime, dVel[:, 1])
+    axis[1].set_ylabel('vel [m]', fontsize=12)
+    axis[1].set_title("vel no eixo Y")
+
+    axis[2].plot(trajTime, vel[:, 2])
+    axis[2].plot(trajTime, dVel[:, 2])
+    axis[2].set_ylabel('vel [m]', fontsize=12)
+    axis[2].set_title("vel no eixo Z")
+
     plt.tight_layout()
     plt.show()
+
 def plotTrajectory(trajTime, eefPositions):
 
     __, axis = plt.subplots(3, 1)

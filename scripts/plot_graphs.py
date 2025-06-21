@@ -22,6 +22,28 @@ def plotRouteInWorkspace(origin, target, workspace):
     ax.set_title('Área de Trabalho com rota proposta')
     plt.tight_layout()
     plt.show()
+def plotTrajectory(trajTime, eefPositions):
+
+    __, axis = plt.subplots(3, 1)
+    eefArray = np.array(eefPositions)
+
+    # For Sine Function
+    axis[0].plot(trajTime, eefArray[:, 0])
+    axis[0].set_ylabel('Posição [m]', fontsize=12)
+    axis[0].set_title("Posição no eixo X")
+
+    axis[1].plot(trajTime, eefArray[:, 1])
+    axis[1].set_ylabel('Posição [m]', fontsize=12)
+    axis[1].set_title("Posição no eixo Y")
+
+    axis[2].plot(trajTime, eefArray[:, 2])
+    axis[2].set_ylabel('Posição [m]', fontsize=12)
+    axis[2].set_title("Posição no eixo Z")
+
+    # Combine all the operations and display
+    plt.tight_layout()
+    plt.show()
+
 def plotJointsTrajectory(trajTime, jointsPos):
 
     __, axis = plt.subplots(3, 1)

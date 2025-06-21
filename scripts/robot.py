@@ -57,7 +57,6 @@ class CylindricRobot(object):
     
     def getTipObject(self, sim):
         return sim.getObject(self.name + self.tipName)
-    
 
     def getMotors(self, sim):
         motors = []

@@ -30,16 +30,24 @@ def plotRouteInWorkspace(origin, target, workspace):
     plt.tight_layout()
     plt.show()
 
-import matplotlib.pyplot as plt
+def plotEefTrajectory(time, toolPosition):
+    fig, ax = setupPlot()
+    trajectory_line, = ax.plot([], [], [], 'k-', linewidth=2)
+    current_pos_marker = ax.scatter([], [], [], c='r', s=50)
+    initialPos = toolPosition[0]
 
-def plotRobotWorkspace(points):
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
-    ax.scatter(points[:, 0], points[:, 1], points[:, 2], s=1, alpha=0.5, c='blue')
-    ax.set_xlabel('X (m)')
-    ax.set_ylabel('Y (m)')
-    ax.set_zlabel('Z (m)')
-    ax.set_title('Área de Trabalho - Gerada pela cinemática direta')
+    def update(frame):
+        x = toolPosition[frame][0]
+        y = toolPosition[frame][1]
+        z = toolPosition[frame][2]
+        trajectory_line.set_data([initialPos[0], x], [initialPos[1], y])
+        trajectory_line.set_3d_properties([initialPos[2], z])
+        current_pos_marker._offsets3d = ([x], [y], [z])
+        return trajectory_line, current_pos_marker
+
+    ani = FuncAnimation(fig, update, frames=len(time),
+                        interval=10, blit=False, repeat=True)
+
     plt.tight_layout()
     plt.show()
 

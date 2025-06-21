@@ -41,6 +41,14 @@ plotRouteInWorkspace(startPosition, targetPosition, wsPoints)
 # Move o robô para a posição inicial da simulação (teletransporta para facilitar)
 robot.setJointPosition(startPosition)
 trajTime, eefPos, eefVel, desiredVel, velTime, jointsPos = robot.executeBangBangTrajectory(targetPosition, duration)
+
+# Salva os dados num arquivo para testes
+import pickle
+filePath = "data.pkl"
+with open(filePath, 'wb') as file:
+    pickle.dump([trajTime, eefPos, eefVel, desiredVel, velTime, jointsPos], file)
+    print(f"Variable saved to {filePath}")
+
 plotEefTrajectory(trajTime, eefPos)
 plotTrajectory(trajTime, eefPos)
 plotEefVelocity(velTime, eefVel, desiredVel)

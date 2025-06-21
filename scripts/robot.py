@@ -127,9 +127,9 @@ class CylindricRobot(object):
               [round(elem, 3) for elem in target], " in " , duration, "s")
         COORDINATES = 3
         # Função lambda que calcula o valor de alfa na etapa de aceleração
-        accAlpha = lambda time : (time**2) / (duration**2) 
+        accAlpha = lambda time : 2 * (time**2) / (duration**2) 
         # Função lambda que calcula o valor de alfa na etapa de frenagem
-        brakeAlpha = lambda time : 2 * time / duration - (time**2)/ (duration**2)
+        brakeAlpha = lambda time : -1 + (4 * time / duration) - (2 * (time**2) / (duration**2))
         
         # Dados de execução da trajetória em coordenada cartesianas
         initialPos = self.getCurrentPosition()
@@ -151,7 +151,7 @@ class CylindricRobot(object):
                 alpha = accAlpha(now)
             else:
                 alpha = brakeAlpha(now)
-            
+
             # Calcula a posição alvo nesse instante
             pos = []
             for i in range(0, COORDINATES):

@@ -4,7 +4,7 @@ Uma simulação de um robô cilíndrico no CoppeliaSim. Projeto final da matéri
 
 [Tarefas do projeto](doc/project_guideline.pdf)
 
-![Vídeo explicativo](doc/video.mp4)
+[Vídeo explicativo](https://youtu.be/5Y4MxMDjVys)
 
 [Resultados](<doc/Projeto Final - Manipuladores Robóticos.pdf>)
 

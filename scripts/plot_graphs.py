@@ -102,8 +102,8 @@ def plotJointsTrajectory(trajTime, jointsPos):
     jointArray = np.array(jointsPos)
 
     # For Sine Function
-    axis[0].plot(trajTime, math.degrees(jointArray[:, 0]))
-    axis[0].set_ylabel('Posição [°]', fontsize=12)
+    axis[0].plot(trajTime, jointArray[:, 0])
+    axis[0].set_ylabel('Posição [rad]', fontsize=12)
     axis[0].set_title("Posição da junta 0 (Rotação da base)")
 
     # For Cosine Function

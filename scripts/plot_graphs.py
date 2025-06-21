@@ -22,3 +22,27 @@ def plotRouteInWorkspace(origin, target, workspace):
     ax.set_title('Área de Trabalho com rota proposta')
     plt.tight_layout()
     plt.show()
+def plotJointsTrajectory(trajTime, jointsPos):
+
+    __, axis = plt.subplots(3, 1)
+    jointArray = np.array(jointsPos)
+
+    # For Sine Function
+    axis[0].plot(trajTime, math.degrees(jointArray[:, 0]))
+    axis[0].set_ylabel('Posição [°]', fontsize=12)
+    axis[0].set_title("Posição da junta 0 (Rotação da base)")
+
+    # For Cosine Function
+    axis[1].plot(trajTime, jointArray[:, 1])
+    axis[1].set_ylabel('Posição [m]', fontsize=12)
+    axis[1].set_title("Posição da junta 1 (Translação em Z)")
+
+    # For Tangent Function
+    axis[2].plot(trajTime, jointArray[:, 2])
+    axis[2].set_xlabel('Tempo [s]', fontsize=12)
+    axis[2].set_ylabel('Posição [m]', fontsize=12)
+    axis[2].set_title("Posição da junta 2 (Translação radial)")
+
+    # Combine all the operations and display
+    plt.tight_layout()
+    plt.show()

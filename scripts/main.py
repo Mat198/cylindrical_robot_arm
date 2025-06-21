@@ -20,7 +20,7 @@ sim.startSimulation()
 robot = CylindricRobot("/P0_ST", sim)
 
 # A matrícula é: 122800
-duration = 5.0 # s
+duration = 13.0 # s
 startPosition = [-0.75, -0.25, 0.75]
 targetPosition = [0.75, 0.75, 1.75] 
 
@@ -40,9 +40,10 @@ plotRouteInWorkspace(startPosition, targetPosition, wsPoints)
 # Executa trajetória
 # Move o robô para a posição inicial da simulação (teletransporta para facilitar)
 robot.setJointPosition(startPosition)
-trajTime, eefPos, eefVel, jointsPos = robot.executeBangBangTrajectory(targetPosition, duration)
+trajTime, eefPos, eefVel, desiredVel, velTime, jointsPos = robot.executeBangBangTrajectory(targetPosition, duration)
 plotEefTrajectory(trajTime, eefPos)
-plotEefVelocity(trajTime, eefVel)
+plotTrajectory(trajTime, eefPos)
+plotEefVelocity(velTime, eefVel, desiredVel)
 plotJointsTrajectory(trajTime, jointsPos)
 
 sim.stopSimulation()

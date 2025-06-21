@@ -86,7 +86,8 @@ class CylindricRobot(object):
         return jointPos
     
     def jointMove(self, theta, d2, d3):
-        print("Joint move to (", theta, " °,", d2, " m,", d3, " m)")
+        if self.debug:
+            print("Joint move to (", round(theta,3), " °,", round(d2,3), " m,", round(d3,3), " m)")
         self.sim.setJointTargetPosition(self.motors[0], theta)
         self.sim.setJointTargetPosition(self.motors[1], d2)
         self.sim.setJointTargetPosition(self.motors[2], d3)

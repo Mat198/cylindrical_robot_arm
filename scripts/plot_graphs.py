@@ -9,9 +9,11 @@ def setupPlot():
     ax.set_xlabel('X [m]', fontsize=12, fontweight='bold')
     ax.set_ylabel('Y [m]', fontsize=12, fontweight='bold')
     ax.set_zlabel('Z [m]', fontsize=12, fontweight='bold')
+    ax.set_xlim3d(-2, 2)
+    ax.set_ylim3d(-2, 2)
+    ax.set_zlim3d(0, 2)
     ax.grid(True)
     return fig, ax
-
 
 def plotRobotWorkspace(points):
     __, ax = setupPlot()

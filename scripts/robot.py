@@ -28,7 +28,7 @@ Transformação de 0 -> 3 (Cinemática inversa)
 """
 import numpy as np
 import math
-import time
+from time import perf_counter
 
 class CylindricRobot(object):
     def __init__(self, name, sim, debug = False):
@@ -134,18 +134,31 @@ class CylindricRobot(object):
         
         # Dados de execução da trajetória em coordenada cartesianas
         initialPos = self.getCurrentPosition()
+        lastPos = initialPos
+        lastDPos = initialPos
 
         # Listas para armazenar dados
         jointsPosition = []
         endEffectorPos = []
         endEffectorVel = []
+        desiredVel = []
         trajectoryTime = []
+        velocityTime = []
 
         # Variáveis de temporização
         switchTime = duration / 2.0
-        startTime = time.time()
-        while time.time() - startTime < duration:
-            now = (time.time() - startTime) 
+        startTime = perf_counter() # Mais preciso que time.time()
+        lastTime = 0.0
+        now = 0.0
+        desiredVel.append([0,0,0])
+        endEffectorVel.append([0,0,0])
+        velocityTime.append(0)
+        while perf_counter() - startTime <= duration:
+            
+            now = (perf_counter() - startTime) 
+            # Fixa o tempo de envio para 0.2 s e envia o ponto de inflexão da velocidade
+            if now - lastTime < 0.2 and abs(now - switchTime) > 0.001:
+                continue
 
             # Define a função alpha utilizada
             if now < switchTime:
@@ -164,23 +177,33 @@ class CylindricRobot(object):
 
             # Mostra o progresso da trajetória
             curPos = self.getCurrentPosition()
-            print("Time:", round(now,2), "    Position: ", [round(elem, 3) for elem in curPos])
-            
+            print("Time:", round(now, 4), "    Position: ", [round(elem, 3) for elem in curPos])
+            print("")
+
+            # Mede a velocidade executada e a velocidade final
+            dVel = [(cur - last) / (now - lastTime) for cur, last in zip(pos, lastDPos)]
+            lastDPos = pos
+            vel = [(cur - last) / (now - lastTime) for cur, last in zip(curPos, lastPos)]
+            lastPos = curPos
+            lastTime = now
+            desiredVel.append(dVel)
+            endEffectorVel.append(vel)
+            velocityTime.append(now)
+
             # Salva os dados para plot dos gráficos
             trajectoryTime.append(now) 
             endEffectorPos.append(curPos)
-            endEffectorVel.append(self.getCurrentVelocity())
             jointsPosition.append(self.getCurrentJointPostions())
-            #  Espera alguns segundos para mandar o próximo alvo
-            time.sleep(0.1)
 
-        # Salva os dados finais
-        trajectoryTime.append(now)
-        endEffectorPos.append(self.getCurrentPosition())
-        endEffectorVel.append(self.getCurrentVelocity())
-        jointsPosition.append(self.getCurrentJointPostions())
+        print("Time:", round(duration,2), "    Position: ", 
+              [round(elem, 3) for elem in self.getCurrentPosition()])
 
-        return trajectoryTime, endEffectorPos, endEffectorVel, jointsPosition
+        # Salva os valores finais de velocidade 
+        endEffectorVel.append([0,0,0])
+        desiredVel.append([0,0,0])
+        velocityTime.append(duration)
+        
+        return trajectoryTime, endEffectorPos, endEffectorVel, desiredVel, velocityTime, jointsPosition
 
     # Retorna a matriz de rotação para transformação direta
     def genDirRotMatrix (self, theta):

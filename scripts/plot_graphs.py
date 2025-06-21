@@ -59,17 +59,21 @@ def plotEefVelocity(trajTime, toolVelocity, desiredVel):
     axis[0].plot(trajTime, vel[:, 0], label='Medida')
     axis[0].plot(trajTime, dVel[:, 0], label='Enviada')
     axis[0].set_ylabel('Velocidade [m/s]', fontsize=12)
+    axis[0].legend()
     axis[0].set_title("vel no eixo X")
 
     axis[1].plot(trajTime, vel[:, 1], label='Medida')
     axis[1].plot(trajTime, dVel[:, 1], label='Enviada')
     axis[1].set_ylabel('Velocidade [m/s]', fontsize=12)
     axis[1].set_title("Velocidade no eixo Y")
+    axis[1].legend()
 
     axis[2].plot(trajTime, vel[:, 2], label='Medida')
     axis[2].plot(trajTime, dVel[:, 2], label='Enviada')
     axis[2].set_ylabel('Velocidade [m/s]', fontsize=12)
+    axis[2].set_xlabel('Tempo [s]', fontsize=12)
     axis[2].set_title("Velocidade no eixo Z")
+    axis[2].legend()
 
     plt.tight_layout()
     plt.show()
@@ -91,6 +95,7 @@ def plotTrajectory(trajTime, eefPositions):
     axis[2].plot(trajTime, eefArray[:, 2])
     axis[2].set_ylabel('Posição [m]', fontsize=12)
     axis[2].set_title("Posição no eixo Z")
+    axis[2].set_xlabel('Tempo [s]', fontsize=12)
 
     # Combine all the operations and display
     plt.tight_layout()
@@ -116,6 +121,7 @@ def plotJointsTrajectory(trajTime, jointsPos):
     axis[2].set_xlabel('Tempo [s]', fontsize=12)
     axis[2].set_ylabel('Posição [m]', fontsize=12)
     axis[2].set_title("Posição da junta 2 (Translação radial)")
+    axis[2].set_xlabel('Tempo [s]', fontsize=12)
 
     # Combine all the operations and display
     plt.tight_layout()
